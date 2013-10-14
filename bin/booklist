@@ -116,7 +116,7 @@ module Booklist
     end
 
     opts.on_tail("--version", "Get the booklist version") do
-      puts Booklist::version
+      puts Booklist::VERSION
       exit
     end
 
