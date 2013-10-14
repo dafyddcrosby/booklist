@@ -28,6 +28,7 @@ require 'rubygems'
 require 'active_record'
 require 'yaml'
 require 'pathname'
+require 'booklist'
 
 module Booklist
   options = OpenStruct.new
@@ -147,43 +148,6 @@ module Booklist
 
   if options.update_schema || !File.exist?(booklist_db_path)
     ActiveRecord::Migrator.migrate('db/migrate')
-  end
-
-  class Book < ActiveRecord::Base
-    has_many :taggings
-    has_many :tags, through: :taggings #, source: "book_id"
-    validates :title, presence: true
-
-    def cli_display
-      puts "ID: #{id}\n"
-      puts "Title: #{title}\n"
-      puts "Author: #{author}\n" if author
-      puts "Additional authors: #{addn_authors}" if addn_authors
-      puts "State: #{state}" if state
-      puts "Tags: #{tag_list}\n" if tags.count > 0
-      puts "\n"
-    end
-
-    def tag_list
-      #put tags
-      tags.map(&:name).join(", ")
-    end
-
-    def tag_list=(names)
-      self.tags = names.map do |n|
-        Tag.where(name: n.strip).first_or_create!
-      end
-    end
-  end
-
-  class Tag < ActiveRecord::Base
-    has_many :taggings
-    has_many :books, through: :taggings #, source: "tag_id"
-  end
-
-  class Tagging < ActiveRecord::Base
-    belongs_to :tag
-    belongs_to :book
   end
 
   if options.act_num = 1
