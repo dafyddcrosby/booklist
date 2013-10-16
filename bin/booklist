@@ -150,7 +150,44 @@ module Booklist
     ActiveRecord::Migrator.migrate('db/migrate')
   end
 
-  if options.act_num = 1
+  if options.act_num = 0
+    require 'curses'
+    Curses.start_color
+    Curses.noecho
+    Curses.curs_set 0
+    books = Books.all
+    win = Curses.stdscr #::Window.new(0,0,0,0)
+    win.setpos(0, 0)
+    win.refresh
+    loop do
+      ch = win.getch
+      ch.downcase!
+      if ch == 'a'
+        # TODO - add record
+      elsif ch == 'e'
+        # TODO - edit record
+      elsif ch == 'd'
+        # TODO - delete record
+      elsif ch == 's'
+        # TODO - change sort column
+      elsif ch == 'r'
+        # TODO - reverse sort direction
+      elsif ch == 'n'
+        # TODO - add notes
+      elsif ch == 'h' or ch == 'l'
+        # TODO - change between books and tags screens
+      elsif ch == 'j'
+        # TODO - move down 1 record
+      elsif ch == 'k'
+        # TODO - move up 1 record
+      elsif ch == 'q'
+        break
+      end
+    end
+
+    win.close
+    Curses.close_screen
+  elsif options.act_num = 1
     if options.action == :add
       if !options.title || options.title == ""
         puts "Please add a --title with the book name"
