@@ -108,7 +108,7 @@ module Booklist
     #  options.config_file = file
     #end
 
-    opts.on("--debug", "Debug node") do
+    opts.on("--debug", "Debug mode") do
       options.debug = true
     end
 
