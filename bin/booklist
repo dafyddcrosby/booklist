@@ -32,7 +32,6 @@ require 'booklist'
 
 module Booklist
   options = OpenStruct.new
-  STATES = { "read" => "Mark as read", "reading" => "Mark as currently reading", "toread" => "Mark as to-read" }
   options.act_num = 0
   usage = nil
   OptionParser.new do |opts|
