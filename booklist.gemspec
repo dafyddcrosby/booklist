@@ -20,4 +20,5 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 1.9'
   gem.add_dependency 'sqlite3'
   gem.add_dependency 'activerecord', '~> 4.0.0'
+  gem.add_development_dependency 'rspec'
 end
