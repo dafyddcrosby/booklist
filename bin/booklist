@@ -190,17 +190,18 @@ module Booklist
         puts "No book with ID of #{options.id} was found"
       end
     elsif options.action == :search
-      books = Book.where(["title LIKE ?", "%#{options.title}%"]) if options.title
-      # TODO - books << Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]) if options.author
-      # TODO show unique records
-      books.each { |b|
-        b.cli_display
-      }
+      books = []
+      books += Book.where(["title LIKE ?", "%#{options.title}%"]).to_a if options.title
+      books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]).to_a if options.author
+      books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.addn_authors}%", "%#{options.addn_authors}%"]).to_a if options.addn_authors
+      books += Book.where(["state = ?", "%#{options.state}%"]).to_a if options.state
+      books.uniq!
+      books.sort!{ |a, b| a.id <=> b.id}
+      books.select!{ |b| b.state == options.state} if options.state
+      books.each { |b| b.cli_display }
     elsif options.action == :list
       books = Book.all
-      books.each{ |b|
-        b.cli_display
-      }
+      books.each{ |b| b.cli_display }
     end
   elsif options.act_num > 1
     puts "Please only use one action."
