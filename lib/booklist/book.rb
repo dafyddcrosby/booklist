@@ -10,6 +10,7 @@ module Booklist
       puts "Author: #{author}\n" if author
       puts "Additional authors: #{addn_authors}" if addn_authors
       puts "State: #{state}" if state
+      puts "Date Read: #{date_read.to_date.to_s}" if date_read
       puts "Tags: #{tag_list}\n" if tags.count > 0
       puts "\n"
     end

@@ -38,6 +38,7 @@ module Booklist
           b.author = "Kareem Abdul-Jabbar"
           b.addn_authors = "Mignon McCarthy"
           b.state = "read"
+          b.date_read = '2001-01-01'
         end
       }
       it "has an author" do
@@ -48,6 +49,9 @@ module Booklist
       end
       it "has a state" do
         expect(book.state).to eq "read"
+      end
+      it "has a custom read date" do
+        expect(book.date_read).to eq '2001-01-01'
       end
       it "is a valid record" do
         expect(book).to be_valid

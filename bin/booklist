@@ -23,12 +23,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 require 'optparse'
+require 'optparse/date'
 require 'ostruct'
 require 'rubygems'
 require 'active_record'
 require 'yaml'
 require 'pathname'
 require 'booklist'
+require 'date'
 
 module Booklist
   options = OpenStruct.new
@@ -93,6 +95,10 @@ module Booklist
 
     opts.on("--tags X,Y,Z", Array, "List of tags") do |tags|
       options.tags = tags
+    end
+
+    opts.on("--date_read DATE", Date, "Date read (eg 2014-02-14)") do |dr|
+      options.date_read = dr
     end
 
     opts.on("--id ID", Integer, "Book ID number") do |id|
@@ -161,6 +167,7 @@ module Booklist
         b.author = options.author if options.author
         b.addn_authors if options.addn_authors
         b.state = options.state if options.state
+        b.date_read = options.date_read if options.date_read
         b.tag_list = options.tags if options.tags
       end
       book.save
@@ -172,6 +179,7 @@ module Booklist
         book.author = options.author if options.author
         book.addn_authors = options.addn_authors if options.addn_authors
         book.state = options.state if options.state
+        book.date_read = options.date_read if options.date_read
         book.tag_list = options.tags if options.tags
         book.save
         book.cli_display
