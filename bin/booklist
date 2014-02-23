@@ -165,7 +165,7 @@ module Booklist
       book = Book.new do |b|
         b.title = options.title
         b.author = options.author if options.author
-        b.addn_authors if options.addn_authors
+        b.addn_authors = options.addn_authors if options.addn_authors
         b.state = options.state if options.state
         b.date_read = options.date_read if options.date_read
         b.tag_list = options.tags if options.tags
