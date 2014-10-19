@@ -187,8 +187,7 @@ module Booklist
         puts "No book with ID of #{options.id} was found"
       end
     elsif options.action == :delete
-      book = Book.find_by(id: options.id)
-      book.destroy
+      delete_book(id)
     elsif options.action == :read
       book = Book.find_by(id: options.id)
       if book
@@ -214,6 +213,11 @@ module Booklist
     puts "Please only use one action."
     puts usage
     exit
+  end
+
+  def delete_book(id)
+    book = Book.find_by(id: id)
+    book.destroy
   end
 
 end
