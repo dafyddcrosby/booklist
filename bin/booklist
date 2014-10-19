@@ -150,6 +150,20 @@ module Booklist
   end
 
   if options.action == :add
+    add_book(options)
+  elsif options.action == :edit
+    edit_book(options)
+  elsif options.action == :delete
+    delete_book(id)
+  elsif options.action == :read
+    read_book(options.id)
+  elsif options.action == :search
+    search_books(options)
+  elsif options.action == :list
+    list_books
+  end
+
+  def add_book(options)
     if !options.title || options.title == ""
       puts "Please add a --title with the book name"
       puts usage
@@ -165,7 +179,9 @@ module Booklist
     end
     book.save
     book.cli_display
-  elsif options.action == :edit
+  end
+
+  def edit_book(options)
     book = Book.find_by(id: options.id)
     if book
       book.title = options.title if options.title
@@ -179,16 +195,18 @@ module Booklist
     else
       puts "No book with ID of #{options.id} was found"
     end
-  elsif options.action == :delete
-    delete_book(id)
-  elsif options.action == :read
-    book = Book.find_by(id: options.id)
+  end
+
+  def read_book(id)
+    book = Book.find_by(id: id)
     if book
       book.cli_display
     else
-      puts "No book with ID of #{options.id} was found"
+      puts "No book with ID of #{id} was found"
     end
-  elsif options.action == :search
+  end
+
+  def search_books(options)
     books = []
     books += Book.where(["title LIKE ?", "%#{options.title}%"]).to_a if options.title
     books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]).to_a if options.author
@@ -198,14 +216,16 @@ module Booklist
     books.sort!{ |a, b| a.id <=> b.id}
     books.select!{ |b| b.state == options.state} if options.state
     books.each { |b| b.cli_display }
-  elsif options.action == :list
-    books = Book.all
-    books.each{ |b| b.cli_display }
   end
 
   def delete_book(id)
     book = Book.find_by(id: id)
     book.destroy
+  end
+
+  def list_books
+    books = Book.all
+    books.each{ |b| b.cli_display }
   end
 
 end
