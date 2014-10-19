@@ -34,42 +34,36 @@ require 'date'
 
 module Booklist
   options = OpenStruct.new
-  options.act_num = 0
+  options.action = nil
   usage = nil
   OptionParser.new do |opts|
     opts.banner = "Usage: booklist [options]"
 
     opts.separator "Actions:"
     opts.on("-a", "--add", "Add a book record", "(--title is required)") do
-      options.act_num += 1
       options.action = :add
     end
 
     opts.on("-e", "--edit [ID]", Integer, "Edit a book record") do |id|
-      options.act_num += 1
       options.id = id if id
       options.action = :edit
     end
 
     opts.on("-d", "--delete [ID]", Integer, "Delete a book record") do |id|
-      options.act_num += 1
       options.id = id if id
       options.action = :delete
     end
 
     opts.on("-s", "--search", "Search for a book") do
-      options.act_num += 1
       options.action = :search
     end
 
     opts.on("-r", "--read [ID]", Integer, "Show a book record's details") do |id|
-      options.act_num += 1
       options.id = id if id
       options.action = :read
     end
 
     opts.on("--list", "List all books in the database") do
-      options.act_num += 1
       options.action = :list
     end
 
@@ -134,8 +128,8 @@ module Booklist
     usage = opts
   end.parse!
 
-  if options.act_num > 1
-    puts "Please only use one action."
+  unless options.action
+    puts "No action specified"
     puts usage
     exit
   end
@@ -155,64 +149,58 @@ module Booklist
     ActiveRecord::Migrator.migrate('db/migrate')
   end
 
-  if options.act_num = 1
-    if options.action == :add
-      if !options.title || options.title == ""
-        puts "Please add a --title with the book name"
-        puts usage
-        exit
-      end
-      book = Book.new do |b|
-        b.title = options.title
-        b.author = options.author if options.author
-        b.addn_authors = options.addn_authors if options.addn_authors
-        b.state = options.state if options.state
-        b.date_read = options.date_read if options.date_read
-        b.tag_list = options.tags if options.tags
-      end
+  if options.action == :add
+    if !options.title || options.title == ""
+      puts "Please add a --title with the book name"
+      puts usage
+      exit
+    end
+    book = Book.new do |b|
+      b.title = options.title
+      b.author = options.author if options.author
+      b.addn_authors = options.addn_authors if options.addn_authors
+      b.state = options.state if options.state
+      b.date_read = options.date_read if options.date_read
+      b.tag_list = options.tags if options.tags
+    end
+    book.save
+    book.cli_display
+  elsif options.action == :edit
+    book = Book.find_by(id: options.id)
+    if book
+      book.title = options.title if options.title
+      book.author = options.author if options.author
+      book.addn_authors = options.addn_authors if options.addn_authors
+      book.state = options.state if options.state
+      book.date_read = options.date_read if options.date_read
+      book.tag_list = options.tags if options.tags
       book.save
       book.cli_display
-    elsif options.action == :edit
-      book = Book.find_by(id: options.id)
-      if book
-        book.title = options.title if options.title
-        book.author = options.author if options.author
-        book.addn_authors = options.addn_authors if options.addn_authors
-        book.state = options.state if options.state
-        book.date_read = options.date_read if options.date_read
-        book.tag_list = options.tags if options.tags
-        book.save
-        book.cli_display
-      else
-        puts "No book with ID of #{options.id} was found"
-      end
-    elsif options.action == :delete
-      delete_book(id)
-    elsif options.action == :read
-      book = Book.find_by(id: options.id)
-      if book
-        book.cli_display
-      else
-        puts "No book with ID of #{options.id} was found"
-      end
-    elsif options.action == :search
-      books = []
-      books += Book.where(["title LIKE ?", "%#{options.title}%"]).to_a if options.title
-      books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]).to_a if options.author
-      books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.addn_authors}%", "%#{options.addn_authors}%"]).to_a if options.addn_authors
-      books += Book.where(["state = ?", "%#{options.state}%"]).to_a if options.state
-      books.uniq!
-      books.sort!{ |a, b| a.id <=> b.id}
-      books.select!{ |b| b.state == options.state} if options.state
-      books.each { |b| b.cli_display }
-    elsif options.action == :list
-      books = Book.all
-      books.each{ |b| b.cli_display }
+    else
+      puts "No book with ID of #{options.id} was found"
     end
-  elsif options.act_num > 1
-    puts "Please only use one action."
-    puts usage
-    exit
+  elsif options.action == :delete
+    delete_book(id)
+  elsif options.action == :read
+    book = Book.find_by(id: options.id)
+    if book
+      book.cli_display
+    else
+      puts "No book with ID of #{options.id} was found"
+    end
+  elsif options.action == :search
+    books = []
+    books += Book.where(["title LIKE ?", "%#{options.title}%"]).to_a if options.title
+    books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]).to_a if options.author
+    books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.addn_authors}%", "%#{options.addn_authors}%"]).to_a if options.addn_authors
+    books += Book.where(["state = ?", "%#{options.state}%"]).to_a if options.state
+    books.uniq!
+    books.sort!{ |a, b| a.id <=> b.id}
+    books.select!{ |b| b.state == options.state} if options.state
+    books.each { |b| b.cli_display }
+  elsif options.action == :list
+    books = Book.all
+    books.each{ |b| b.cli_display }
   end
 
   def delete_book(id)
