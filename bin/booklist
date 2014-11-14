@@ -153,7 +153,7 @@ if options.action == :add
 elsif options.action == :edit
   Booklist::edit_book(options)
 elsif options.action == :delete
-  Booklist::delete_book(id)
+  Booklist::delete_book(options.id)
 elsif options.action == :read
   Booklist::read_book(options.id)
 elsif options.action == :search
