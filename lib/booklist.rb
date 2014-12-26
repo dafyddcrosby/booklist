@@ -51,7 +51,7 @@ module Booklist
     books += Book.where(["title LIKE ?", "%#{options.title}%"]).to_a if options.title
     books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]).to_a if options.author
     books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.addn_authors}%", "%#{options.addn_authors}%"]).to_a if options.addn_authors
-    books += Book.where(["state = ?", "%#{options.state}%"]).to_a if options.state
+    books += Book.where(["state LIKE ?", "%#{options.state}%"]).to_a if options.state
     books.uniq!
     books.sort!{ |a, b| a.id <=> b.id}
     books.select!{ |b| b.state == options.state} if options.state
