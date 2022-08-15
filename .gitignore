@@ -1,2 +1,2 @@
-booklist*gem
+*.gem
 Gemfile.lock
