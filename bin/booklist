@@ -22,15 +22,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-require 'optparse'
-require 'optparse/date'
-require 'ostruct'
-require 'rubygems'
-require 'active_record'
-require 'yaml'
-require 'pathname'
-require 'booklist'
-require 'date'
+require "optparse"
+require "optparse/date"
+require "ostruct"
+require "rubygems"
+require "active_record"
+require "yaml"
+require "pathname"
+require "booklist"
+require "date"
 
 options = OpenStruct.new
 options.action = nil
@@ -101,10 +101,10 @@ OptionParser.new do |opts|
   opts.separator ""
   opts.separator "Common options:"
 
-  # TODO - configurable booklist path
-  #opts.on("-c", "--config FILE", "Use configuration file") do |file|
+  # TODO: - configurable booklist path
+  # opts.on("-c", "--config FILE", "Use configuration file") do |file|
   #  options.config_file = file
-  #end
+  # end
 
   opts.on("--debug", "Debug mode") do
     options.debug = true
@@ -133,31 +133,30 @@ unless options.action
   exit
 end
 
-# TODO Create configuration directory if it doesn't exist
+# TODO: Create configuration directory if it doesn't exist
 # mkdir ~/.booklist
 
-# TODO configurable booklist path
-booklist_db_path = File.join(Dir.home, '.booklist', 'booklist.db')
+# TODO: configurable booklist path
+booklist_db_path = File.join(Dir.home, ".booklist", "booklist.db")
 
 ActiveRecord::Base.establish_connection(
-  :adapter => 'sqlite3',
-  :database => booklist_db_path.to_s)
+  adapter: "sqlite3",
+  database: booklist_db_path.to_s
+)
 ActiveRecord::Base.logger = Logger.new(STDERR) if options.debug
 
-if options.update_schema || !File.exist?(booklist_db_path)
-  ActiveRecord::Migrator.migrate('db/migrate')
-end
+ActiveRecord::Migrator.migrate("db/migrate") if options.update_schema || !File.exist?(booklist_db_path)
 
 if options.action == :add
-  Booklist::add_book(options)
+  Booklist.add_book(options)
 elsif options.action == :edit
-  Booklist::edit_book(options)
+  Booklist.edit_book(options)
 elsif options.action == :delete
-  Booklist::delete_book(options.id)
+  Booklist.delete_book(options.id)
 elsif options.action == :read
-  Booklist::read_book(options.id)
+  Booklist.read_book(options.id)
 elsif options.action == :search
-  Booklist::search_books(options)
+  Booklist.search_books(options)
 elsif options.action == :list
   Booklist.list_books
 end

@@ -1,5 +1,5 @@
-require 'support/active_record'
-require 'booklist/book'
+require "support/active_record"
+require "booklist/book"
 
 module Booklist
   describe Book do
@@ -11,11 +11,11 @@ module Booklist
     end
 
     context "simple book" do
-      let(:book) {
+      let(:book) do
         Book.new do |b|
           b.title = "The Epic of Gilgamesh"
         end
-      }
+      end
 
       it "has no author" do
         expect(book.author).to be_nil
@@ -32,15 +32,15 @@ module Booklist
     end
 
     context "complex book" do
-      let(:book) {
+      let(:book) do
         Book.new do |b|
           b.title = "Kareem"
           b.author = "Kareem Abdul-Jabbar"
           b.addn_authors = "Mignon McCarthy"
           b.state = "read"
-          b.date_read = '2001-01-01'
+          b.date_read = "2001-01-01"
         end
-      }
+      end
       it "has an author" do
         expect(book.author).to eq "Kareem Abdul-Jabbar"
       end
@@ -51,7 +51,7 @@ module Booklist
         expect(book.state).to eq "read"
       end
       it "has a custom read date" do
-        expect(book.date_read).to eq '2001-01-01'
+        expect(book.date_read).to eq "2001-01-01"
       end
       it "is a valid record" do
         expect(book).to be_valid

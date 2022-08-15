@@ -1,6 +1,6 @@
-require 'booklist/version'
-require 'booklist/book'
-require 'booklist/tag'
+require "booklist/version"
+require "booklist/book"
+require "booklist/tag"
 
 module Booklist
   def self.add_book(options)
@@ -49,12 +49,18 @@ module Booklist
   def self.search_books(options)
     books = []
     books += Book.where(["title LIKE ?", "%#{options.title}%"]).to_a if options.title
-    books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%", "%#{options.author}%"]).to_a if options.author
-    books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.addn_authors}%", "%#{options.addn_authors}%"]).to_a if options.addn_authors
+    if options.author
+      books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.author}%",
+                           "%#{options.author}%"]).to_a
+    end
+    if options.addn_authors
+      books += Book.where(["author LIKE ? or addn_authors LIKE ?", "%#{options.addn_authors}%",
+                           "%#{options.addn_authors}%"]).to_a
+    end
     books += Book.where(["state LIKE ?", "%#{options.state}%"]).to_a if options.state
     books.uniq!
-    books.sort!{ |a, b| a.id <=> b.id}
-    books.select!{ |b| b.state == options.state} if options.state
+    books.sort! { |a, b| a.id <=> b.id }
+    books.select! { |b| b.state == options.state } if options.state
     books.each { |b| b.cli_display }
   end
 
@@ -64,8 +70,7 @@ module Booklist
   end
 
   def self.list_books
-    books =Book.all
-    books.each{ |b| b.cli_display }
+    books = Book.all
+    books.each { |b| b.cli_display }
   end
-
 end

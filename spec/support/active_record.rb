@@ -1,4 +1,4 @@
-require 'active_record'
+require "active_record"
 ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
 
 I18n.enforce_available_locales = false
@@ -19,8 +19,8 @@ module ActiveModel::Validations
   #
   #     model.errors_on(:attribute).should include("can't be blank")
   def errors_on(attribute)
-    self.valid?
-    [self.errors[attribute]].flatten.compact
+    valid?
+    [errors[attribute]].flatten.compact
   end
-  alias :error_on :errors_on
+  alias error_on errors_on
 end
