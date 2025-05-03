@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
 
   gem.license       = "bsd" # The (three-clause) BSD License
 
-  gem.files         = `git ls-files`.split($\)
+  gem.files         = File.read("Manifest.txt").split
   gem.executables   = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
   gem.require_paths = ["lib"]
   gem.version       = Booklist::VERSION
